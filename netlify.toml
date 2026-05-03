@@ -1,0 +1,13 @@
+# Netlify configuration for this repo
+# NOTE: This repository is a Python Streamlit app.
+# Netlify can only host static sites or serverless functions,
+# so it cannot run the Streamlit app directly.
+
+[build]
+  command = "echo 'This project is a Streamlit app and cannot run directly on Netlify. See DEPLOYMENT.md.'"
+  publish = "frontend"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

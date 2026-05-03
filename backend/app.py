@@ -1,18 +1,27 @@
 import streamlit as st
 import os
-from repo_loader import load_repo_files, get_file_tree
+from repo_loader import load_repo_files, get_file_tree, clone_git_repo, is_git_url
 from tools import explain_code, answer_repo_question, generate_readme
 
 st.set_page_config(page_title="GenAI Dev Assistant MCP", layout="wide")
 
 st.title("🧠 GenAI Dev Assistant (MCP-style)")
 
-repo_path = st.text_input("Enter local repo path", "./sample_repo")
+repo_path = st.text_input("Enter local repo path or GitHub repo URL", "./sample_repo")
 
 if st.button("Load Repository"):
-    st.session_state.files = load_repo_files(repo_path)
-    st.session_state.tree = get_file_tree(repo_path)
-    st.success("Repo loaded successfully!")
+    if is_git_url(repo_path):
+        try:
+            repo_path = clone_git_repo(repo_path)
+            st.success(f"Cloned repo to {repo_path}")
+        except Exception as e:
+            st.error(f"Failed to clone repository: {e}")
+            repo_path = None
+
+    if repo_path:
+        st.session_state.files = load_repo_files(repo_path)
+        st.session_state.tree = get_file_tree(repo_path)
+        st.success("Repo loaded successfully!")
 
 if "files" in st.session_state:
 

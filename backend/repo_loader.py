@@ -1,6 +1,39 @@
 import os
+import subprocess
+import urllib.parse
 
-SUPPORTED_EXTENSIONS = [".py", ".js", ".ts", ".java", ".cpp"]
+SUPPORTED_EXTENSIONS = [".py", ".js", ".jsx", ".ts", ".tsx", ".vue", ".html", ".java", ".cpp"]
+
+
+def get_repo_name_from_url(repo_url):
+    parsed = urllib.parse.urlparse(repo_url)
+    path = parsed.path.rstrip("/")
+    if path.endswith(".git"):
+        path = path[:-4]
+    owner = os.path.basename(os.path.dirname(path))
+    repo_name = os.path.basename(path)
+    return f"{owner}_{repo_name}"
+
+
+def clone_git_repo(repo_url, target_base=None):
+    if target_base is None:
+        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+        target_base = os.path.join(repo_root, "data", "remote_repos")
+
+    os.makedirs(target_base, exist_ok=True)
+    repo_name = get_repo_name_from_url(repo_url)
+    target_path = os.path.join(target_base, repo_name)
+
+    if os.path.isdir(target_path) and os.path.isdir(os.path.join(target_path, ".git")):
+        return target_path
+
+    subprocess.run(["git", "clone", repo_url, target_path], check=True)
+    return target_path
+
+
+def is_git_url(path):
+    return path.startswith("http://") or path.startswith("https://")
+
 
 def load_repo_files(repo_path):
     files_data = []

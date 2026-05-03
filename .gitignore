@@ -1,0 +1,19 @@
+# Ignore local environment secrets
+.env
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+
+# Runtime / cloned repositories
+data/remote_repos/
+
+# Streamlit log files
+.streamlit/

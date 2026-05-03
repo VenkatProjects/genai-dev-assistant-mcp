@@ -4,11 +4,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+client = OpenAI(
+    api_key=os.getenv("GROQ_API_KEY"),  # ✅ use env variable
+    base_url="https://api.groq.com/openai/v1"
+)
 
 def ask_llm(prompt):
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="llama-3.1-8b-instant",
         messages=[
             {"role": "system", "content": "You are a senior software engineer who explains code clearly."},
             {"role": "user", "content": prompt}
